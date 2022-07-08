@@ -1,0 +1,64 @@
+import java.net.*;
+import java.io.*;
+
+public class cliente2 {
+    public static void main(String args[])throws Exception{
+            Socket s=new Socket("localhost",2974);
+            DataInputStream din=new DataInputStream(s.getInputStream());
+            DataOutputStream dout=new DataOutputStream(s.getOutputStream());
+            BufferedReader br=new BufferedReader(new InputStreamReader(System.in));
+
+            String str="",str2="";
+            while(!str.equals("chau")){
+                str=br.readLine();
+                dout.writeUTF(str);
+                dout.flush();
+                str2=din.readUTF();
+                System.out.println("Servidor : "+str2);
+            }
+            dout.close();
+            s.close();
+        }
+}
+
+
+
+
+
+
+
+
+
+import java.io.BufferedReader;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.InputStreamReader;
+import java.net.ServerSocket;
+import java.net.Socket;
+
+public class servidor {
+    public static void main(String[] args) {
+        try{
+            ServerSocket ss=new ServerSocket(6666);   // aca creo el socket en el puerto 6666
+            Socket s=ss.accept();//establishes connection    // aca hace el accept
+
+            DataInputStream din=new DataInputStream(s.getInputStream()); // crea un stream de entrada y uno de salida
+            DataOutputStream dout=new DataOutputStream(s.getOutputStream());
+            BufferedReader br=new BufferedReader(new InputStreamReader(System.in));
+
+            String str="",str2="";
+            while(!str.equals("stop")){
+                str=din.readUTF();  // aca lee del socket
+                System.out.println("Client: "+str);
+                str2=br.readLine();  // aca lee de teclado
+                dout.writeUTF(str2); //manda el dato para el cliente
+                dout.flush(); // siempre se flushea el buffer
+            }
+            din.close();
+            s.close();
+            ss.close();
+        }catch(Exception e){System.out.println(e);}
+    }
+}
+
+
